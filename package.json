@@ -4,6 +4,8 @@
   "description": "Axios adapter",
   "main": "index.js",
   "scripts": {
+    "prepublish": "./node_modules/.bin/babel -d ./ ./src",
+    "dev": "./node_modules/.bin/babel -d ./ ./src --watch",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
