@@ -11,7 +11,7 @@ const DEFAULT_INTERCEPTORS = {
 export default function axiosAdapter(axios, options = {}) {
   const requestAdapterOptions = {
     ...DEFAULT_OPTIONS,
-    ...config
+    ...options
   };
 
   return function(url, requestOptions = {}, applicationInterceptors = {}) {
@@ -36,7 +36,7 @@ export default function axiosAdapter(axios, options = {}) {
       interceptors.request(request);
     }
 
-    const proxt = (data => data);
+    const proxy = (data => data);
     return axios(request).then(interceptors.response || proxy, interceptors.error || proxy);
   }
 };
