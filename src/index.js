@@ -4,33 +4,39 @@ const DEFAULT_OPTIONS = {
 };
 
 const DEFAULT_INTERCEPTORS = {
-  request: () => {},
   response: httpResponse => httpResponse.data,
   error: httpErrorResponse => Promise.reject(httpErrorResponse)
 };
 
-export default function axiosAdapter(axios, config = {}) {
-  const options = {
+export default function axiosAdapter(axios, options = {}) {
+  const requestAdapterOptions = {
     ...DEFAULT_OPTIONS,
-    ...(config.options || {})
+    ...config
   };
 
-  const interceptors = {
-    ...DEFAULT_INTERCEPTORS,
-    ...(config.interceptors || {})
-  };
-
-  return function(url, requestOptions) {
+  return function(url, requestOptions = {}, applicationInterceptors = {}) {
     const request = {
-      ...options,
+      ...requestAdapterOptions,
       url: url,
       method: requestOptions.verb,
       params: requestOptions.query,
-      data: requestOptions.body
+      data: requestOptions.body,
+      headers: {
+        ...(requestAdapterOptions.headers || {}),
+        ...(requestOptions.headers || {})
+      }
     };
 
-    interceptors.request(request);
+    const interceptors = {
+      ...DEFAULT_INTERCEPTORS,
+      ...applicationInterceptors
+    };
 
-    return axios(request).then(interceptors.response, interceptors.error);
+    if (interceptors.request) {
+      interceptors.request(request);
+    }
+
+    const proxt = (data => data);
+    return axios(request).then(interceptors.response || proxy, interceptors.error || proxy);
   }
 };
