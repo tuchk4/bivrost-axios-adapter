@@ -1,5 +1,5 @@
 const DEFAULT_OPTIONS = {
-  responseType: 'text',
+  responseType: 'json',
   withCredentials: false
 };
 
@@ -14,7 +14,7 @@ export default function axiosAdapter(axios, options = {}) {
     ...options
   };
 
-  return function(url, requestOptions = {}, applicationInterceptors = {}) {
+  return function axiosApi(url, requestOptions = {}, applicationInterceptors = {}) {
     const request = {
       ...requestAdapterOptions,
       url: url,
