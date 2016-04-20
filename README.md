@@ -1,5 +1,8 @@
 # Bivrost axios adapter
 
+[![Build Status](https://api.travis-ci.org/frankland/bivrost-axios-adapter.svg?branch=master)](https://travis-ci.org/frankland/bivrost-axios-adapter)
+[![NPM Version](https://img.shields.io/npm/v/bivrost-axios-adapter.svg)](https://npmjs.org/package/bivrost-axios-adapter)
+
 Adapter for browser's native axios function. 
 
 ```
