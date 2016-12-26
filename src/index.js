@@ -1,42 +1,61 @@
-const DEFAULT_OPTIONS = {
-  responseType: 'json',
-  withCredentials: false
-};
+import axios from 'axios';
 
-const DEFAULT_INTERCEPTORS = {
-  response: httpResponse => httpResponse.data,
-  error: httpErrorResponse => Promise.reject(httpErrorResponse)
-};
+const DEFAULT_ADAPTER_OPTIONS = {};
 
-export default function axiosAdapter(axios, options = {}) {
-  const requestAdapterOptions = {
-    ...DEFAULT_OPTIONS,
+const DEFAULT_ADAPTER_INTERCEPTORS = {};
+
+export default function fetchAdapter({
+    interceptors = {},
+    ...options
+  } = {}) {
+
+  const adapterOptions = {
+    ...DEFAULT_ADAPTER_OPTIONS,
     ...options
   };
 
-  return function axiosApi(url, requestOptions = {}, applicationInterceptors = {}) {
-    const request = {
-      ...requestAdapterOptions,
-      url: url,
-      method: requestOptions.verb,
-      params: requestOptions.query,
-      data: requestOptions.body,
+  const adapterIntinterceptors = {
+    ...DEFAULT_ADAPTER_INTERCEPTORS,
+    ...interceptors
+  };
+
+  return function(url, requestOptions = {}) {
+    const config = {
+      ...adapterOptions,
+      ...requestOptions,
       headers: {
-        ...(requestAdapterOptions.headers || {}),
+        ...(adapterOptions.headers || {}),
         ...(requestOptions.headers || {})
       }
     };
 
-    const interceptors = {
-      ...DEFAULT_INTERCEPTORS,
-      ...applicationInterceptors
-    };
-
-    if (interceptors.request) {
-      interceptors.request(request);
+    if (requestOptions.body) {
+      config.data = requestOptions.body;
     }
 
-    const proxy = (data => data);
-    return axios(request).then(interceptors.response || proxy, interceptors.error || proxy);
+    if (requestOptions.query) {
+      config.params = requestOptions.query;
+    }
+
+    let request = {
+      ...config,
+      url,
+      method: requestOptions.method,
+    };
+
+    if (adapterIntinterceptors.request) {
+      request = adapterIntinterceptors.request(request);
+    }
+
+    return axios(request)
+      .then(response => {
+        return adapterIntinterceptors.response
+          ? adapterIntinterceptors.response(response)
+          : response;
+      }, error => {
+        return adapterIntinterceptors.error
+          ? adapterIntinterceptors.error(error)
+          : Promise.reject(error);
+      });
   }
 };

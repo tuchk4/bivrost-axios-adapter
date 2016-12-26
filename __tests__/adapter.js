@@ -14,7 +14,7 @@ describe('Adapter', () => {
 
   pit('GET request', () => {
    return axiosApi(`${httpbin}/get`, {
-      verb: 'GET',
+      method: 'GET',
       query: {
         ...query
       }
