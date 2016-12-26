@@ -43,7 +43,7 @@ export default function fetchAdapter({
       method: requestOptions.method,
     };
 
-    if (adapterIntinterceptors.request) {
+    if (adapterIntinterceptors.request) {      
       request = adapterIntinterceptors.request(request);
     }
 

@@ -1,18 +1,14 @@
-jest.unmock('../src');
-jest.unmock('axios');
-
 import axiosAdapter from '../src';
-import axios from 'axios';
 
 const httpbin = 'http://httpbin.org';
 
 describe('Adapter', () => {
-  const axiosApi = axiosAdapter(axios);
+  const axiosApi = axiosAdapter();
   const query = {
     foo: 'bar'
   };
 
-  pit('GET request', () => {
+  it('GET request', () => {
    return axiosApi(`${httpbin}/get`, {
       method: 'GET',
       query: {
@@ -27,7 +23,8 @@ describe('Adapter', () => {
       //  'X-test': 1
       //}
     }).then(response => {
-      expect(response.args).toEqual({
+
+      expect(response.data.args).toEqual({
         ...query
       });
     });
